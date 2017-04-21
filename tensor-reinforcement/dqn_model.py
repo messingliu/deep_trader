@@ -47,7 +47,7 @@ class DQN():
 				print "Could not find old network weights"
 
 		global summary_writer
-		summary_writer = tf.train.SummaryWriter('logs',graph=self.session.graph)
+		summary_writer = tf.summary.FileWriter	('logs',graph=self.session.graph)
 
 	def create_Q_network(self, data_dictionary):
 		# network weights
@@ -72,11 +72,11 @@ class DQN():
 	def create_training_method(self):
 		self.action_input = tf.placeholder("float",[None,self.action_dim]) # one hot presentation
 		self.y_input = tf.placeholder("float",[None])
-		Q_action = tf.reduce_sum(tf.mul(self.Q_value,self.action_input),reduction_indices = 1)
+		Q_action = tf.reduce_sum(tf.multiply(self.Q_value,self.action_input),reduction_indices = 1)
 		self.cost = tf.reduce_mean(tf.square(self.y_input - Q_action))
-		tf.scalar_summary("loss",self.cost)
+		tf.summary.scalar("loss",self.cost)
 		global merged_summary_op
-		merged_summary_op = tf.merge_all_summaries()
+		merged_summary_op = tf.summary.merge_all()
 		self.optimizer = tf.train.AdamOptimizer(0.0001).minimize(self.cost)
 
 	def perceive(self,state,action,reward,next_state,done):
